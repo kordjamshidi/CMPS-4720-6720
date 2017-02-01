@@ -87,13 +87,5 @@ object IrisClassification {
     }
   }
 
-  def getLabel(category: String): Int = {
-    category match {
-      case "Iris-setosa" => 1
-      case "Iris-versicolor" => 2
-      case "Iris-virginica" => 3
-    }
-  }
-
 
 }
