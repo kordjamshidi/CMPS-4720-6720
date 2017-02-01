@@ -9,9 +9,11 @@ import scala.collection.mutable.ArrayBuffer
 
 object IrisClassification {
   def main(args: Array[String]): Unit = {
+    //settings
     val filename = "iris.data"
     val numInputs = 4
     val learningRate = 0.5
+    val numTrainingRuns = 100
 
     //create perceptron for each output label
     val setosa = new Perceptron("Iris-setosa",numInputs)
@@ -28,20 +30,18 @@ object IrisClassification {
       data += line.split(",").map(_.trim)
     }
 
-    train(perceptrons,data,learningRate)
+    train(perceptrons,data,learningRate,numTrainingRuns)
     perceptrons.foreach(perceptron => {
       println(perceptron.category + " perceptron weights: " + perceptron.weights.deep.mkString(","))
     })
     predict(perceptrons,data)
   }
 
-  def train(perceptrons: Array[Perceptron], data: ArrayBuffer[Array[String]], learningRate: Double): Unit = {
-    var learning = true
-    var count = 0
+  def train(perceptrons: Array[Perceptron], data: ArrayBuffer[Array[String]], learningRate: Double, totalRuns: Int): Unit = {
+    var numRuns = 0
 
-    while (learning && count < 100) {
-      learning = false
-      count = count + 1
+    while (numRuns < totalRuns) {
+      numRuns = numRuns + 1
 
       for (row <- data) {
         val category = row.last.toString
@@ -55,10 +55,7 @@ object IrisClassification {
             case c if c == category => {
               // this perceptron should be positive
               output.signum match {
-                case -1 | 0 => {
-                  perceptron.updateWeights(inputs, learningRate, 1)
-                  learning = true
-                }
+                case -1 | 0 => perceptron.updateWeights(inputs, learningRate, 1)
                 case 1 => null
               }
             }
@@ -66,10 +63,7 @@ object IrisClassification {
               // this perceptron should be negative
               output.signum match {
                 case -1 | 0 => null
-                case 1 => {
-                  perceptron.updateWeights(inputs, learningRate, -1)
-                  learning = true
-                }
+                case 1 => perceptron.updateWeights(inputs, learningRate, -1)
               }
             }
           }
