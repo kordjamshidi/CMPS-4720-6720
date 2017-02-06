@@ -1,17 +1,22 @@
+% match.txt includes all the data
+% 1 represents Setosa, 2 represents Versicolor, 3 represents Virginica
 Data = textread('match.txt');
 data = Data(:,1:4);
 label = Data(:,5);
+%%
 %testing data
 testindex = [1:5,51:55,101:105];
 Testdata = data(testindex,:);
 Testlabel = label(testindex);
 Testdata(:,5)=1;
+%%
 %training data
 data(testindex,:)=[];
 label(testindex)=[];
 data(:,5)=1;
 
 
+%%
 %Initial random W
 %Start with Initial weights
 %Pick up training instances one by one
@@ -32,6 +37,7 @@ for n = 1 : 135
     end
 end
 end
+%%
 %Compute Test Error
 TestOutput = Testdata*W';
 [val, d]=max(TestOutput');
