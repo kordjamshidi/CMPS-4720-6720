@@ -27,7 +27,7 @@ Y = zeros(150,1);
 Y(a,:) = 1;
 Y(b,:) = 2;
 Y(c,:) = 3;
-
+clear a b c
 
 %% training the perceptron
 
@@ -76,7 +76,9 @@ while iter<IterMax
         
     end
 end
-clear IterMax iter
+clear iter
+clear max_output max_loc
+clear TrOutput01 TrOutput02 TrOutput03 w1 w2 w3
     
  %% testing perceptron
  
@@ -94,12 +96,15 @@ clear IterMax iter
  fprintf('Among the 30 testing samples, \n ');
  for i = 1:30
      [temp,TeOutput(i)]=max([Out01(i),Out02(i),Out03(i)]);
+     clear temp
      if TeOutput(i)~=TeY(i)
          fprintf('No. %d sample in testing group is classified wrong \n',i);
      else
          r = r+1;
      end
  end
+ clear Out01 Out02 Out03
+ clear i
  fprintf('%d samples are classified correctly\n',r);
  TeErr = (30-r)/30*100;
  fprintf('Testing error is %3.2f%% \n',TeErr);
