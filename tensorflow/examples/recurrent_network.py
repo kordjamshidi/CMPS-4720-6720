@@ -23,8 +23,8 @@ handle 28 sequences of 28 steps for every sample.
 '''
 
 # Parameters
-learning_rate = 0.001
-training_iters = 100000
+learning_rate = 0.01
+training_iters = 30000
 batch_size = 128
 display_step = 10
 
@@ -80,7 +80,7 @@ correct_pred = tf.equal(tf.argmax(pred,1), tf.argmax(y,1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 # Initializing the variables
-init = tf.global_variables_initializer()
+init = tf.initialize_all_variables()
 
 # Launch the graph
 with tf.Session() as sess:
