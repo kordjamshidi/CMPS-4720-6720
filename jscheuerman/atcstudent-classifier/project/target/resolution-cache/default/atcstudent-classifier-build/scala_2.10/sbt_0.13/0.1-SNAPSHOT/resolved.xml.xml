@@ -4,7 +4,7 @@
 		module="atcstudent-classifier-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20170224134309"
+		publication="20170228123639"
 		e:sbtVersion="0.13" e:scalaVersion="2.10"
 	>
 		<description>
