@@ -15,15 +15,11 @@ object ATCStudentDataModel extends DataModel {
     x: Student => x.getAge
   }
 
-  val gender = property(student) {
-    x: Student => x.getGender
-  }
-
   val gaming = property(student) {
     x: Student => x.getGamingExpertise
   }
 
-  val studentLabel = property(student) {
+  val studentLabel = property(student)("0","1") {
     x: Student => x.getLabel
   }
 }

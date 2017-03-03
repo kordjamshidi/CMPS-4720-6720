@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: edu.illinois.cs.cogcomp:jwnl-prime:1.0.4:jar">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/.ivy2/cache/edu.illinois.cs.cogcomp/jwnl-prime/jars/jwnl-prime-1.0.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

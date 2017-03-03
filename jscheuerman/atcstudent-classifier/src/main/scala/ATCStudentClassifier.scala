@@ -9,5 +9,5 @@ import ATCStudentDataModel._
 object ATCStudentClassifier extends Learnable(student) {
   def label = studentLabel;
   override lazy val classifier = new SupportVectorMachine()
-  override def feature = using(afqt,age,gender,gaming)
+  override def feature = using(afqt,age,gaming)
 }

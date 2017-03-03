@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: edu.princeton:wordnet-dict:3.1:jar">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/.ivy2/cache/edu.princeton/wordnet-dict/jars/wordnet-dict-3.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

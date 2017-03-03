@@ -10,7 +10,7 @@ object ATCStudentApp extends Logging {
 
   def main(args: Array[String]): Unit = {
 
-    ATCStudentDataModel.student populate studentData.training
+    ATCStudentDataModel.student.populate(studentData.training)
     ATCStudentClassifier.forget()
     ATCStudentClassifier.learn(30)
     ATCStudentClassifier.test(studentData.test)

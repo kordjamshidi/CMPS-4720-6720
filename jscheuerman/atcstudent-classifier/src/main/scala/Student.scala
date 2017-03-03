@@ -39,8 +39,8 @@ class Student(student: String) {
     }
   })
 
-  def getLabel(): Int = {
-    columns(Col_Unit1_NonGrad).toInt
+  def getLabel(): String = {
+    columns(Col_Unit1_NonGrad)
   }
 
   def getAFQT(): Double = {
