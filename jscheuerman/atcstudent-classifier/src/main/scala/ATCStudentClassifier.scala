@@ -1,17 +1,13 @@
 /**
-  * Created by jscheuerman on 2/24/2017.
+  * Created by jscheuerman on 3/3/2017.
   */
 
-import scala.io.Source
-import scala.collection.mutable.ArrayBuffer
-import breeze.linalg.{DenseVector, _}
+import edu.illinois.cs.cogcomp.lbjava.learn.SupportVectorMachine
+import edu.illinois.cs.cogcomp.saul.classifier.Learnable
+import ATCStudentDataModel._
 
-object ATCStudentClassifier {
-  def main(args: Array[String]): Unit = {
-    val studentsTrain = new ATCStudentReader("example-data.csv").students
-
-    studentsTrain.foreach(student => {
-      student.columns.foreach(column => println(column))
-    })
-  }
+object ATCStudentClassifier extends Learnable(student) {
+  def label = studentLabel;
+  override lazy val classifier = new SupportVectorMachine()
+  override def feature = using(afqt,age,gender,gaming)
 }
