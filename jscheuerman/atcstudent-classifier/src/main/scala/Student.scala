@@ -140,5 +140,5 @@ class Student(student: String) {
   }
 
   //TODO: Do we need a better way to deal with NULL data?
-  def cleanString(str: String): String = if (str.contains("NULL")) """0""" else str
+  def cleanString(str: String): String = if (str.contains("NULL") || str == "") """0""" else str
 }
