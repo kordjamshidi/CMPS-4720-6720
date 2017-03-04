@@ -27,7 +27,7 @@ SNP = (snpdata_new_proc-repmat(mean(snpdata_new_proc),[184,1]))...
 
 % t-test
 METHY = METHY(:,t_selection(METHY,A));
-FMRI  = FMI(:,t_selection(FMRI,A));
+FMRI  = FRMI(:,t_selection(FMRI,A));
 SNP = SNP(:,t_selection(SNP,A));
 
 % organize labels
