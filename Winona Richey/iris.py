@@ -44,6 +44,12 @@ def class_split(dataset):
     return Setosa_set, Versicolor_set, Virginica_set
 
 def train(data):
+    '''
+    parameter:
+         data - array of data [features, label]
+    returns: [w1,w2,w3]
+         
+'''
     # initialize lists of weights, randomly
     R = float(.001)# learning rate
     epochs = 1000

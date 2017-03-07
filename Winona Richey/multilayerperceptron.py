@@ -8,7 +8,6 @@ Implementing a multi-class, multilayer perceptron to classify Iris Data
   
 '''
 import csv
-import numpy as np
 import random
 import tensorflow as tf
 
