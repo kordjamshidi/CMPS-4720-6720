@@ -47,6 +47,15 @@ class Student(student: String) {
     columns(Col_AFQT).toDouble
   }
 
+  def getDOTGroup(): List[Double] = {
+    var dot = ListBuffer[Double]()
+    dot += columns(Col_Mean_Experiment_RTcr).toDouble
+    dot += columns(Col_Mean_Experiment_RTincr).toDouble
+    dot += columns(Col_Experiment_pc).toDouble
+
+    dot.toList
+  }
+
   def getMeanExpermentRTcr(): Double = {
     columns(Col_Mean_Experiment_RTcr).toDouble
   }
@@ -57,6 +66,22 @@ class Student(student: String) {
 
   def getExperimentPc(): Double = {
     columns(Col_Experiment_pc).toDouble
+  }
+
+  def getNbackGroup(): List[Double] = {
+
+    var nback = ListBuffer[Double]()
+    nback += columns(Col_Nback_LibCorr_pc).toDouble
+    nback += columns(Col_Mean_RT).toDouble
+    nback += columns(Col_Mean_lag0_RTcorr).toDouble
+    nback += columns(Col_Mean_lag1_RTcorr).toDouble
+    nback += columns(Col_Mean_lag2_RTcorr).toDouble
+    nback += columns(Col_Mean_lag3_RTcorr).toDouble
+    nback += columns(Col_Lag0_pc).toDouble
+    nback += columns(Col_Lag1_pc).toDouble
+    nback += columns(Col_Lag2_pc).toDouble
+    nback += columns(Col_Lag3_pc).toDouble
+    nback.toList
   }
 
   def getNbackLibCorrPc(): Double = {
@@ -99,12 +124,29 @@ class Student(student: String) {
     columns(Col_Lag3_pc).toDouble
   }
 
+
+  def getOspanGroup(): List[Double] = {
+    var ospan = ListBuffer[Double]()
+    ospan += columns(Col_OspanAbsoluteScore).toDouble
+    ospan += columns(Col_OspanPartialScore).toDouble
+
+    ospan.toList
+  }
+
   def getOspanAbsoluteScore(): Double = {
     columns(Col_OspanAbsoluteScore).toDouble
   }
 
   def getOspanPartialScore(): Double = {
     columns(Col_OspanPartialScore).toDouble
+  }
+
+  def getSspanGroup(): List[Double] = {
+    var sspan = ListBuffer[Double]()
+    sspan += columns(Col_SspanAbsoluteScore).toDouble
+    sspan += columns(Col_SspanPartialScore).toDouble
+
+    sspan.toList
   }
 
   def getSspanAbsoluteScore(): Double = {

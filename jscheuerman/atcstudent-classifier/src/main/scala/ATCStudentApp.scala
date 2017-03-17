@@ -3,9 +3,10 @@
   */
 
 import edu.illinois.cs.cogcomp.saul.util.Logging
+import ATCStudentClassifiers.{ATCStudentClassifier, ATCStudentPerceptron}
 
 object ATCStudentApp extends Logging {
-  val studentData = new ATCStudentReader("example.csv")
+  val studentData = new ATCStudentReader("test.data")
 
   def main(args: Array[String]): Unit = {
     val (training,test) = studentData.students.splitAt(80)
@@ -15,5 +16,9 @@ object ATCStudentApp extends Logging {
     ATCStudentClassifier.learn(50)
     ATCStudentClassifier.test(test)
 
+
+    /*ATCStudentPerceptron.forget()
+    ATCStudentPerceptron.learn(80)
+    ATCStudentPerceptron.test(test)*/
   }
 }

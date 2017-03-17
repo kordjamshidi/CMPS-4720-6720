@@ -10,6 +10,9 @@ object ATCStudentDataModel extends DataModel {
   val afqt = property(student) {
     x: Student => x.getAFQT
   }
+  val dotGroup = property(student) {
+    x: Student => x.getDOTGroup()
+  }
 
   val meanexprtcr = property(student) {
     x: Student => x.getMeanExpermentRTcr
@@ -21,6 +24,10 @@ object ATCStudentDataModel extends DataModel {
 
   val exppc = property(student) {
     x: Student => x.getExperimentPc
+  }
+
+  val nbackGroup = property(student) {
+    x: Student => x.getNbackGroup
   }
 
   val nbacklibcorrect = property(student) {
@@ -63,12 +70,21 @@ object ATCStudentDataModel extends DataModel {
     x: Student => x.getLag3Pc
   }
 
+  val ospanGroup = property(student) {
+    x: Student => x.getOspanGroup()
+  }
+
   val ospanabsscore = property(student) {
     x: Student => x.getOspanAbsoluteScore
   }
 
   val ospanpartscore = property(student) {
     x: Student => x.getOspanPartialScore
+  }
+
+
+  val sspanGroup = property(student) {
+    x: Student => x.getSspanGroup()
   }
 
   val sspanabsscore = property(student) {

@@ -7,14 +7,11 @@ import scala.util.Random;
 
 class ATCStudentReader(filename:String) {
   var students = ListBuffer[Student]()
-  //var training = ListBuffer[Student]()
-  //var test = ListBuffer[Student]()
 
   val bufferedSource = io.Source.fromFile(filename)
   var firstLine = true
 
   for (student <- bufferedSource.getLines()) {
-    //skip the first line
     if (firstLine) {
       firstLine = false
     }
