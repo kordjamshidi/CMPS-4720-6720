@@ -12,31 +12,23 @@ from PIL import Image
 from sklearn import svm
 import random
 
-splitratio = .8
 ##reading in images
-os.chdir("./neg_imgs")
+os.chdir("./image_folder")
 i=0
-negativesamples={}
+samples={}
+names=[]
 
 cwd = os.getcwd()
 print cwd
-print "Loading negative files"
+print "Loading all files"
 for filename in glob.glob('*.jpg'):
     image = cv2.imread(filename)
-    negativesamples[i]=image
-    i=i+1
- 
-print "Loading positive files"   
-os.chdir("./../pos_imgs")
-i=0
-positivesamples={}
-for filename in glob.glob('*.jpg'):
-    image = cv2.imread(filename)
-    positivesamples[i]=image
+    samples[i]=image
+    names.append(filename)
     i=i+1
 
        
-###load pre-trained network (inceptionv3 from google trained on ImageNet2012)
+#---load pre-trained network (inceptionv3 from google trained on ImageNet2012)---
 
 os.chdir("./../")
 with open('./classify_image_graph_def.pb', 'rb') as graph_file:
@@ -44,38 +36,30 @@ with open('./classify_image_graph_def.pb', 'rb') as graph_file:
     graph_def.ParseFromString(graph_file.read())
     tf.import_graph_def(graph_def, name='')
 
-##input Negative samples and get feature vectors
-negative_features = []
-for i in range(0,len(negativesamples)):
-    image=negativesamples[i]
+##input samples and get feature vectors
+features = []
+for i in range(0,len(samples)):
+    image=samples[i]
     print i
     with tf.Session() as sess:
         softmax_tensor = sess.graph.get_tensor_by_name('pool_3:0')
-        negative_feature = np.squeeze(sess.run(
+        feature = np.squeeze(sess.run(
             softmax_tensor,
             {'DecodeJpeg:0': image}
         ))
-        negative_feature=np.array(negative_feature)
-        negative_features.append(negative_feature)
+        feature=np.array(feature)
+        features.append(feature)
         
-##input Positive samples and get feature vectors
-positive_features=[]
-for i in range(0,len(positivesamples)):
-    image=positivesamples[i]
-    with tf.Session() as sess:
-        png_data = tf.placeholder(tf.string, shape=[])
-        decoded_png = tf.image.decode_png(png_data, channels=3)
-        softmax_tensor = sess.graph.get_tensor_by_name('pool_3:0')
-        positive_feature = np.squeeze(sess.run(softmax_tensor,{'DecodeJpeg:0': image}))
-        positive_feature=np.array(positive_feature)
-        positive_features.append(positive_feature)
 
 #saving feature vectors to a file (to run SVM)
-np.save('featurevectors_DL_neg.npy', negative_features)
-np.save('featurevectors_DL_pos.npy', positive_features)
+np.save('featurevectors_DL.npy', features)
 
-f2.close()
-f1.close()
+#saving filenames, (in same order as feature vectors) to maintain association
+# between file and whole image
+np.save('filenames.npy', names)
 
+print len(features)
+print len(names)
+print "^^ should be the same"
 
 

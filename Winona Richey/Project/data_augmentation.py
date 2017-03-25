@@ -27,15 +27,13 @@ lines = csv.reader(open("all_annotations.csv", "rU"))
 lines = list(lines)
 labels = []
 
-positive_foldername = "pos_imgs"
-negative_foldername = "neg_imgs"
-os.mkdir(positive_foldername)
-os.mkdir(negative_foldername)
+foldername = "image_folder"
+os.mkdir(foldername)
 
 for x in range(1, len(lines)): #skip titles row
     labels.append(lines[x][1])
 
-for x in range(1,9):    #for each whole transfer image
+for x in range(1,3):    #for each whole transfer image
     count_init = (x-1)*10
     print "\nnew set"
     BeforeName = 'pictures/' + str(x) +'A.tiff'
@@ -83,9 +81,11 @@ for x in range(1,9):    #for each whole transfer image
 
     count = count_init  #label = labels[count]
     label = labels[count]
-    pairs = [[before[0], after[0], "positive_whole"]]
     
-    print "normalizing all but the first image"
+    #pairs = [before picture, after picture, filename]
+    pairs = [[before[0], after[0], "transfer_" + str(x)+ "positive_whole"]]
+    
+    print "normalizing all but the first (whole) image"
     for cut_num in range(1,len(before)):
         cut = before[cut_num]
         normalized_cut_b = (cut - float(cut.min())) * 255/float(cut.ptp())
@@ -93,41 +93,40 @@ for x in range(1,9):    #for each whole transfer image
         cut = after[cut_num]
         normalized_cut_a = (cut - float(cut.min())) * 255/float(cut.ptp())
         normalized_cut_a = np.uint8(normalized_cut_a)
-        #print cut_num, "labeled:", labels[count]
-        pairs.append([normalized_cut_b,normalized_cut_a, labels[count]+"_normalizedcut"+str(cut_num)])
+        #name = positive/negative + transfer# + _normalizedcut + which cut it is
+        pairs.append([normalized_cut_b,normalized_cut_a, labels[count] +"_normalizedcut"+str(cut_num)])
         count +=1
     count = count_init
 
     print "rotating images"
-    for image_set in range(0,len(pairs)): #for every cropped partition
+    for image_set in range(0,len(pairs)): #for every image (whole, fourths and sixths = 11 total)
         image_set = pairs[image_set]
-        rotlables = ["", "90", "180", "270"]
-        degrees = [0, 90.0, 180.0, 270.0]
-        for rotation in range(0,4): #0 = regular, 1 = 90, 2 = 180, 3 = 270
+        rotlables = ["90", "180", "270"]
+        degrees = [90.0, 180.0, 270.0]
+        for rotation in range(0,3): #0 = 90, 1 = 180, 2 = 270 (0 degrees is already in the list)
             name = image_set[2]+"_rot"+rotlables[rotation]
             bef_cut = np.rot90(np.asarray(image_set[0]),degrees[rotation])
             af_cut = np.rot90(np.asarray(image_set[1]),degrees[rotation])
             pairs.append([bef_cut, af_cut, name])
         count+=1
     print "mirroring images"
-    for image_set in range(0,len(pairs)): #for every cropped partition
+    for image_set in range(0,len(pairs)): #for every image (whole, fourths and sixths = 11 total)
         image_set = pairs[image_set]
         fliplabels = ["vertmirror", "horizmirror"]
         for flip_val in range(1,3): #1 = vertical flip; 2= horizontal flip
-            #print "mirrored", flip_val
             name = image_set[2]+fliplabels[flip_val-1]
-            #np.fliplr
             pairs.append([cv2.flip(image_set[0],flip_val), cv2.flip(image_set[1],flip_val), name])
+            
     #pairs = [whole, normalized fourths, normalized sixths,
     print "combining and saving images"
     for image_set in pairs:
         combined = np.hstack((image_set[0], image_set[1]))
-        name = image_set[2] + str(x) + '_combined' + '.jpg'
+        name = "transfer_"+ str(x) + "_" + image_set[2] + '_combined' + '.jpg'
         if "positive" in image_set[2]:
-            cv2.imwrite(os.path.join(positive_foldername, name), combined)
+            cv2.imwrite(os.path.join(foldername, name), combined)
             fw.writerow([name, "positive"])
         else:
-            cv2.imwrite(os.path.join(negative_foldername, name), combined)            
+            cv2.imwrite(os.path.join(foldername, name), combined)            
             fw.writerow([name, "negative"])
         
 

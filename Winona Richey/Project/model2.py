@@ -165,10 +165,13 @@ with tf.Session() as sess:
                 
             batch_x = train_data[start:end]
             batch_y = train_labels[start:end]
+
             # Run optimization op (backpropogation) and cost op (to get loss value)
             _, c = sess.run([optimizer, cost], feed_dict={x: batch_x, y: batch_y})
+
             # Compute average loss
             avg_cost += c / total_batch
+            
         # Display logs per epoch step
         if epoch % display_step == 0:
             print("Epoch:", '%04d' % (epoch+1), "cost=", \

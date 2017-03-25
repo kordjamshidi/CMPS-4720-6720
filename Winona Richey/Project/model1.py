@@ -37,42 +37,75 @@ def get_accuracy(Training_data, Training_labels, negative_test_featues, positive
         accuracy = float(negativeaccuracy + positiveaccuracy)/(float(len(negative_test_features)+ len(positive_test_features)))
         return final_negative_accuracy, final_positive_accuracy, accuracy
 
-switch = .6 #.8 = 80% training/20% testing
-neg_DL = np.load('featurevectors_DL_neg.npy')
-pos_DL = np.load('featurevectors_DL_pos.npy')
-switch = int(switch*min(len(neg_DL), len(pos_DL)))
+def test_divide(features,names, test_image_index):
+        train_features = []
+        train_names = []
+        test_features = []
+        test_names = []
+        transfer_name = "transfer_" + str(test_image_index)
+        for x in range(len(features)):
+                feature = features[x]
+                name = names[x]
+                if transfer_name == name[:10]:
+                        test_features.append(feature)
+                        test_names.append(name)
+                else:
+                        train_features.append(feature)
+                        train_names.append(name)
+        return train_features, train_names, test_features, test_names
+        
+def label_divide(features,names):
+        pos_features = []
+        pos_names = []
+        neg_features = []
+        neg_names = []
+        for x in range(len(features)):
+                feature = features[x]
+                name = names[x]
+                if "pos" in name:
+                        pos_features.append(feature)
+                        pos_names.append(name)
+                else: #negative
+                        neg_features.append(feature)
+                        neg_names.append(name)
+        return pos_features, neg_features
 
-positive_features= pos_DL[:switch]
-positive_test_features = pos_DL[switch:]      
-#[positive_featurescat, positive_test_featurescat] = splitDataset(pos_DL,switch)
-negative_features= neg_DL[:switch]
-negative_test_features = neg_DL[switch:]
+features = np.load('featurevectors_DL.npy')
+names = np.load('filenames.npy')
 
-
-
-'''-----------------------------------------------------------------'''
-newfile = 'results6040.csv' #where results will be printed
+newfile = 'results.csv' #where results will be printed
 f8 = open(newfile, 'wb')
 fw8 = csv.writer(f8)
-fw8.writerow(['Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
+fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
  
-negative_labels=np.ones(len(np.array(negative_features)))*(0)
-positive_labels=np.ones(len(np.array(positive_features)))*(1)
-Training_data=[]
-Training_data=np.concatenate((positive_features,negative_features), axis=0)
-Training_labels=np.concatenate((positive_labels, negative_labels), axis=0)
 
-kernels = ["rbf","linear", "poly","poly","poly","poly","poly"]
-deg = 2
-for SVM_kern in kernels:
-        if SVM_kern == "poly":
-                clf = svm.SVC(kernel = SVM_kern, degree = deg)
-                neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
-                fw8.writerow([SVM_kern, deg, neg, pos, accuracy])
-                deg +=1
-        else:
-                clf = svm.SVC(kernel = SVM_kern)
-                neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
-                fw8.writerow([SVM_kern, '-' , neg, pos, accuracy])
+#define test features by whole image
+#       --> ex: test set = all images derived from image one
+#       each whole image produces
+for x in range(1,3): #currently testing for 8 images
+        
+        train_features, train_names, test_features, test_names = test_divide(features,names, x)
+        
+        positive_features, negative_features = label_divide(train_features,train_names)
+        positive_test_features, negative_test_features = label_divide(test_features,test_names)
+
+        negative_labels=np.ones(len(np.array(negative_features)))*(0)
+        positive_labels=np.ones(len(np.array(positive_features)))*(1)
+        Training_data=[]
+        Training_data=np.concatenate((positive_features,negative_features), axis=0)
+        Training_labels=np.concatenate((positive_labels, negative_labels), axis=0)
+
+        kernels = ["rbf","linear", "poly","poly","poly","poly","poly"]
+        deg = 2
+        for SVM_kern in kernels:
+                if SVM_kern == "poly":
+                        clf = svm.SVC(kernel = SVM_kern, degree = deg)
+                        neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
+                        fw8.writerow(['transfer_' + str(x), SVM_kern, deg, neg, pos, accuracy])
+                        deg +=1
+                else:
+                        clf = svm.SVC(kernel = SVM_kern)
+                        neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
+                        fw8.writerow(['transfer_' + str(x), SVM_kern, '-' , neg, pos, accuracy])
         
 
