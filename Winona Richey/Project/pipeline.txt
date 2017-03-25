@@ -3,15 +3,15 @@
 #run in terminal with “./pipeline.txt”
 echo “Running Data Pipeline”
 
-#removes existing images and begins replacing them
+#  removes existing images and begins replacing them
 #rm -rf image_folder
 
 
 
 #  make images
-#  produces (overwrites) annotations_all.csv
-echo “Data Augmentation”
-python data_augmentation.py
+#  produces (overwrites) annotations csv file
+#echo “Data Augmentation”
+#python data_augmentation.py
 
 
 #  learn features; output features to npy files
