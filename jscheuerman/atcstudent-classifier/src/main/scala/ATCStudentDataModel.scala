@@ -1,7 +1,3 @@
-/**
-  * Created by jscheuerman on 3/3/2017.
-  */
-
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 object ATCStudentDataModel extends DataModel {
@@ -118,6 +114,7 @@ object ATCStudentDataModel extends DataModel {
   val eyedom = property(student) {
     x: Student => x.getEyeDom
   }
+
   val studentLabel = property(student)("0","1") {
     x: Student => x.getLabel
   }

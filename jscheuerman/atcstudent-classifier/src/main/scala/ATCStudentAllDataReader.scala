@@ -1,8 +1,10 @@
 import scala.collection.mutable.ListBuffer
 
-class ATCStudentReader(filename:String) {
-  var students = ListBuffer[Student]()
-  var normalized = ListBuffer[Student]()
+class ATCStudentAllDataReader(filename: String) {
+  var students = ListBuffer[StudentAllData]()
+  var normalized = ListBuffer[StudentAllData]()
+  //var training = ListBuffer[Student]()
+  //var test = ListBuffer[Student]()
 
   val bufferedSource = io.Source.fromFile(filename)
   var firstLine = true
@@ -11,12 +13,13 @@ class ATCStudentReader(filename:String) {
   var labels = ListBuffer[String]()
 
   for (student <- bufferedSource.getLines()) {
+    //skip the first line
     if (firstLine) {
       labels = makeLabels(student)
       firstLine = false
     }
     else {
-      val newStudent = new Student(student)
+      val newStudent = new StudentAllData(student)
       newStudent.columns.foreach(column => {
         if (minValue < column) {
           minValue = column
@@ -28,6 +31,7 @@ class ATCStudentReader(filename:String) {
       students = students += newStudent
     }
   }
+
   val range = maxValue - minValue
   normalized = students
   normalized.foreach(student => {

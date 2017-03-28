@@ -31,156 +31,165 @@ class Student(student: String) {
   val Col_Handed = 132
   val Col_EyeDom = 133
 
-  var columns = new ListBuffer[String]()
-  student.split(",").foreach(column => columns += cleanString(column))
-  columns.foreach(column => {
-    if (column.contains("NULL")) {
-      println(column)
+  var columns = new ListBuffer[Double]()
+  var i = 0;
+  var label = ""
+  
+  student.split(",").foreach(column => {
+    //skip first column. This is the ID
+    //skip 2nd column, irrelevant
+    //Second column is the label
+    if (i == 2) {
+      label = column
     }
+    if (i > 2) {
+      columns += cleanString(column).toDouble
+
+    }
+    i = i + 1
   })
 
   def getLabel(): String = {
-    columns(Col_Unit1_NonGrad)
+    label
   }
 
   def getAFQT(): Double = {
-    columns(Col_AFQT).toDouble
+    columns(Col_AFQT)
   }
 
   def getDOTGroup(): List[Double] = {
     var dot = ListBuffer[Double]()
-    dot += columns(Col_Mean_Experiment_RTcr).toDouble
-    dot += columns(Col_Mean_Experiment_RTincr).toDouble
-    dot += columns(Col_Experiment_pc).toDouble
+    dot += columns(Col_Mean_Experiment_RTcr)
+    dot += columns(Col_Mean_Experiment_RTincr)
+    dot += columns(Col_Experiment_pc)
 
     dot.toList
   }
 
   def getMeanExpermentRTcr(): Double = {
-    columns(Col_Mean_Experiment_RTcr).toDouble
+    columns(Col_Mean_Experiment_RTcr)
   }
 
   def getMeanExperimentRTincr(): Double = {
-    columns(Col_Mean_Experiment_RTincr).toDouble
+    columns(Col_Mean_Experiment_RTincr)
   }
 
   def getExperimentPc(): Double = {
-    columns(Col_Experiment_pc).toDouble
+    columns(Col_Experiment_pc)
   }
 
   def getNbackGroup(): List[Double] = {
 
     var nback = ListBuffer[Double]()
-    nback += columns(Col_Nback_LibCorr_pc).toDouble
-    nback += columns(Col_Mean_RT).toDouble
-    nback += columns(Col_Mean_lag0_RTcorr).toDouble
-    nback += columns(Col_Mean_lag1_RTcorr).toDouble
-    nback += columns(Col_Mean_lag2_RTcorr).toDouble
-    nback += columns(Col_Mean_lag3_RTcorr).toDouble
-    nback += columns(Col_Lag0_pc).toDouble
-    nback += columns(Col_Lag1_pc).toDouble
-    nback += columns(Col_Lag2_pc).toDouble
-    nback += columns(Col_Lag3_pc).toDouble
+    nback += columns(Col_Nback_LibCorr_pc)
+    nback += columns(Col_Mean_RT)
+    nback += columns(Col_Mean_lag0_RTcorr)
+    nback += columns(Col_Mean_lag1_RTcorr)
+    nback += columns(Col_Mean_lag2_RTcorr)
+    nback += columns(Col_Mean_lag3_RTcorr)
+    nback += columns(Col_Lag0_pc)
+    nback += columns(Col_Lag1_pc)
+    nback += columns(Col_Lag2_pc)
+    nback += columns(Col_Lag3_pc)
     nback.toList
   }
 
   def getNbackLibCorrPc(): Double = {
-    columns(Col_Nback_LibCorr_pc).toDouble
+    columns(Col_Nback_LibCorr_pc)
   }
 
   def getMeanRT(): Double = {
-    columns(Col_Mean_RT).toDouble
+    columns(Col_Mean_RT)
   }
 
   def getMeanLag0RTcorr(): Double = {
-    columns(Col_Mean_lag0_RTcorr).toDouble
+    columns(Col_Mean_lag0_RTcorr)
   }
 
   def getMeanLag1RTcorr(): Double = {
-    columns(Col_Mean_lag1_RTcorr).toDouble
+    columns(Col_Mean_lag1_RTcorr)
   }
 
   def getMeanLag2RTcorr(): Double = {
-    columns(Col_Mean_lag2_RTcorr).toDouble
+    columns(Col_Mean_lag2_RTcorr)
   }
 
   def getMeanLag3RTcorr(): Double = {
-    columns(Col_Mean_lag3_RTcorr).toDouble
+    columns(Col_Mean_lag3_RTcorr)
   }
 
   def getLag0Pc(): Double = {
-    columns(Col_Lag0_pc).toDouble
+    columns(Col_Lag0_pc)
   }
 
   def getLag1Pc(): Double = {
-    columns(Col_Lag1_pc).toDouble
+    columns(Col_Lag1_pc)
   }
 
   def getLag2Pc(): Double = {
-    columns(Col_Lag2_pc).toDouble
+    columns(Col_Lag2_pc)
   }
 
   def getLag3Pc(): Double = {
-    columns(Col_Lag3_pc).toDouble
+    columns(Col_Lag3_pc)
   }
 
 
   def getOspanGroup(): List[Double] = {
     var ospan = ListBuffer[Double]()
-    ospan += columns(Col_OspanAbsoluteScore).toDouble
-    ospan += columns(Col_OspanPartialScore).toDouble
+    ospan += columns(Col_OspanAbsoluteScore)
+    ospan += columns(Col_OspanPartialScore)
 
     ospan.toList
   }
 
   def getOspanAbsoluteScore(): Double = {
-    columns(Col_OspanAbsoluteScore).toDouble
+    columns(Col_OspanAbsoluteScore)
   }
 
   def getOspanPartialScore(): Double = {
-    columns(Col_OspanPartialScore).toDouble
+    columns(Col_OspanPartialScore)
   }
 
   def getSspanGroup(): List[Double] = {
     var sspan = ListBuffer[Double]()
-    sspan += columns(Col_SspanAbsoluteScore).toDouble
-    sspan += columns(Col_SspanPartialScore).toDouble
+    sspan += columns(Col_SspanAbsoluteScore)
+    sspan += columns(Col_SspanPartialScore)
 
     sspan.toList
   }
 
   def getSspanAbsoluteScore(): Double = {
-    columns(Col_SspanAbsoluteScore).toDouble
+    columns(Col_SspanAbsoluteScore)
   }
 
   def getSspanPartialScore(): Double = {
-    columns(Col_SspanPartialScore).toDouble
+    columns(Col_SspanPartialScore)
   }
 
-  def getAge(): Int = {
-    columns(Col_Age).toInt
+  def getAge(): Double = {
+    columns(Col_Age)
   }
 
-  def getGender(): Int = {
-    columns(Col_Gender).toInt
+  def getGender(): Double = {
+    columns(Col_Gender)
   }
 
-  def getGamingExpertise(): Int = {
-    columns(Col_GamingExpertise).toInt
+  def getGamingExpertise(): Double = {
+    columns(Col_GamingExpertise)
   }
 
-  def getEyeCorrected(): Int = {
-    columns(Col_EyeCorrected).toInt
+  def getEyeCorrected(): Double = {
+    columns(Col_EyeCorrected)
   }
 
-  def getHanded(): Int = {
-    columns(Col_Handed).toInt
+  def getHanded(): Double = {
+    columns(Col_Handed)
   }
 
-  def getEyeDom(): Int = {
-    columns(Col_EyeDom).toInt
+  def getEyeDom(): Double = {
+    columns(Col_EyeDom)
   }
 
-  //TODO: Do we need a better way to deal with NULL data?
   def cleanString(str: String): String = if (str.contains("NULL") || str == "") """0""" else str
 }
