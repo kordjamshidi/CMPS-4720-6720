@@ -2,22 +2,31 @@
   * Created by jscheuerman on 3/3/2017.
   */
 
+import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
+import ATCStudentAllDataModel._
 import ATCStudentDataModel._
-import edu.illinois.cs.cogcomp.lbjava.learn.{Sigmoid, SparseNetworkLearner}
 
 object ATCStudentClassifiers {
 
-  object ATCStudentClassifier extends Learnable(student) {
-    def label = studentLabel;
-    override lazy val classifier = new LassoPerceptron();
-    def errors = classifier.errors
-    override def feature = using(afqt,dotGroup,nbackGroup,ospanGroup,sspanGroup,age,gender,gaming,eyecorrected,handed,eyedom)
-
+  object ATCStudentPerceptron extends Learnable(studentAllData) {
+    def label = studentAllDataLabel;
+    override lazy val classifier = new SparsePerceptron();
+    override def feature = using(allFeatures)
   }
-  object ATCStudentNetwork extends Learnable(student) {
+  object ATCStudentLasso2 extends Learnable(studentAllData) {
+    def label = studentAllDataLabel;
+    override lazy val classifier = new LassoPerceptron();
+    override def feature = using(allFeatures)
+  }
+  object ATCStudentLasso extends Learnable(studentAllData) {
+    def label = studentAllDataLabel;
+    override lazy val classifier = new Lasso();
+    override def feature = using(allFeatures)
+  }
+  object ATCStudentLassoAbridged extends Learnable(student) {
     def label = studentLabel;
-    override lazy val classifier = new SparseNetworkLearner();
+    override lazy val classifier = new Lasso();
     override def feature = using(afqt,dotGroup,nbackGroup,ospanGroup,sspanGroup,age,gender,gaming,eyecorrected,handed,eyedom)
   }
 }

@@ -1,8 +1,5 @@
 import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron;
 
-/**
- * Created by jscheuerman on 3/28/2017.
- */
 public class LassoPerceptron extends SparsePerceptron {
     private double regularization = 0.1;
 
