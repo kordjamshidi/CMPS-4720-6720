@@ -80,14 +80,15 @@ def label_divide(features,names):
                         neg_names.append(name)
         return pos_features, neg_features
 
-features =np.load('cell_featurevectors_DL.npy')
-names = np.load('cell_filenames.npy')
+feature_set = "larger"
+hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
 
-newfile = 'SVM_cell_results.csv' #where results will be printed
+features =np.load(feature_set + '_cell_featurevectors_DL.npy')
+names = np.load(feature_set + '_cell_filenames.npy')
+newfile = feature_set + '_linear_SVM_cell_resultsL'+ str(hold_x_out) + 'O.csv' #where results will be printed
 f8 = open(newfile, 'wb')
 fw8 = csv.writer(f8)
 fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
-hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
 
 #define test features by whole image
 #       --> ex: test set = all images derived from image one
@@ -105,7 +106,7 @@ for x in range(1,25): #testing for each image
         Training_labels=np.concatenate((positive_labels, negative_labels), axis=0)
 
         kernels = ["rbf","linear", "poly","poly","poly","poly","poly"]
-#        kernels = ['linear']
+        kernels = ['linear']
         deg = 2
         for SVM_kern in kernels:
                 if SVM_kern == "poly":

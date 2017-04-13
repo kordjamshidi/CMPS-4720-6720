@@ -125,7 +125,7 @@ for x in range(1,25):    #for each whole transfer image
     for image_set in range(0,len(pairs)): #for every image (whole, fourths and sixths = 11 total)
         image_set = pairs[image_set]
         fliplabels = ["vertmirror", "horizmirror"]
-        for flip_val in range(1,3): #1 = vertical flip; 2= horizontal flip
+        for flip_val in range(1,2): #1 = vertical flip; 2= horizontal flip
             name = image_set[2]+fliplabels[flip_val-1]
             pairs.append([cv2.flip(image_set[0],flip_val), cv2.flip(image_set[1],flip_val), name])
     

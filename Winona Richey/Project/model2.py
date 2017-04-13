@@ -14,6 +14,25 @@ from PIL import Image
 from sklearn import svm
 import random
 
+
+def label_split(data, label_index):
+    '''input a matrix, data with each row representing
+       an example with a label at data[row][label_index]
+       also converts labels to integers
+    '''
+    data_array= []
+    label_array= []
+    for row in data:
+        t = row[label_index]
+        if t == 0: #negative
+            t = [0]
+        else: #positive
+            t = [1]
+        label_array.append(t)
+        del row[label_index]
+        data_array.append(row)
+    return data_array, label_array
+
 def test_divide(features,names, test_image_index, hold_x_out):
         train_features = []
         train_names = []
@@ -41,22 +60,23 @@ def test_divide(features,names, test_image_index, hold_x_out):
                         train_names.append(name)
         return train_features, train_names, test_features, test_names
         
-def label_divide(features,names):
-        pos_features = []
-        pos_names = []
-        neg_features = []
-        neg_names = []
-        for x in range(len(features)):
-                feature = features[x]
-                name = names[x]
-                if "pos" in name:
-                        pos_features.append(feature)
-                        pos_names.append(name)
-                else: #negative
-                        neg_features.append(feature)
-                        neg_names.append(name)
-        return pos_features, neg_features
-
+def get_labels(features,names):
+    '''
+    parameters: features: feature vector np array
+                names: array of image titles as a strings; names[x] = image name for features[x]
+    returns: numpy array of labels, in the same order as features and string names
+             where 
+    
+'''
+    labels = []
+    for x in range(len(features)):
+        feature = features[x]
+        name = names[x]
+        if "pos" in name:
+            labels.append(1)
+        else: #negative
+            labels.append
+    return np.asarray(labels)
 
 def multilayer_perceptron(x, weights, biases):
     '''
@@ -83,7 +103,6 @@ def multilayer_perceptron(x, weights, biases):
 
 #parameters
 label_index = 4
-splitRatio = .8
 learning_rate = 0.1
 training_epochs = 10
 batch_size = 10
@@ -99,29 +118,16 @@ fw8 = csv.writer(f8)
 fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
 '''
 hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
-
-#concatenate label to the end of each feature matrix
-
-train_features, train_names, test_features, test_names = test_divide(features,names, x,hold_x_out)
-        
-positive_features, negative_features = label_divide(train_features,train_names)
-positive_test_features, negative_test_features = label_divide(test_features,test_names)
-
-positive_labels=np.transpose(np.ones(len(positive_features))*(1))
-positive_labels = positive_labels.reshape(len(positive_features),1)
-positive_features = np.concatenate((positive_features, positive_labels), axis=1)
-
-negative_labels=np.transpose(np.ones(len(negative_features))*(0))
-negative_labels = negative_labels.reshape(len(negative_features),1)
-negative_features = np.concatenate((negative_features, negative_labels), axis=1)
+x = 1 #which transfer to hold-out; will be changed in a loop eventually
 
 
-#split into training testing
-data = np.vstack((negative_features, positive_features))
+#split into training and testing sets
+train_data, train_names, test_data, test_names = test_divide(features,names, x,hold_x_out)
 
-#randomize data
-np.random.shuffle(data)
-data = np.ndarray.tolist(data)
+#convert names (Strings) into labels (matrices)
+train_labels = get_labels(train_data, train_names)
+test_labels = get_labels(test_data, test_names)
+
 
 
 '''------------------------model begins-------------------'''
@@ -130,14 +136,8 @@ data = np.ndarray.tolist(data)
 # Network Parameters
 n_hidden_1 = 100 # 1st layer number of nodes
 n_hidden_2 = 100 # 2nd layer number of nodes
-n_input = len(negative_features[0]) #  data input size (length of feature vector for each data point)
+n_input = len(train_data[0]) #  data input size (length of feature vector for each data point)
 n_classes = 1 # binary
-train_data, test_data = splitdata(data, splitRatio)
-
-#split training data into labels and test/train
-train_data, train_labels= label_split(train_data, label_index)
-test_data, test_labels= label_split(test_data, label_index)
-
 
 # tensorflow Graph input
 x = tf.placeholder("float", [None, n_input]) #initializing data placeholder
@@ -149,6 +149,7 @@ weights = {
     'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
     'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
 }
+#need a bias for every layer
 biases = {
     'b1': tf.Variable(tf.random_normal([n_hidden_1])),
     'b2': tf.Variable(tf.random_normal([n_hidden_2])),
@@ -179,7 +180,7 @@ with tf.Session() as sess:
             #defining where the batch is coming from
             start = i*batch_size
             end = i*batch_size+batch_size
-            if end> len(train_data):
+            if end > len(train_data):
                 end = len(train_data)
                 
             batch_x = train_data[start:end]
