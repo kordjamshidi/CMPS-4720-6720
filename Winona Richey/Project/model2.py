@@ -14,42 +14,48 @@ from PIL import Image
 from sklearn import svm
 import random
 
+def test_divide(features,names, test_image_index, hold_x_out):
+        train_features = []
+        train_names = []
+        test_features = []
+        test_names = []
+        #define the names you're taking as test set
+        #iterate through image indices test_image_index+[0..hold_x_out]
+        image_names = []
+        for x in range(hold_x_out):
+                #location of filename dependent on the # of digits in the index
+                image_names.append("transfer_" + str((test_image_index+x)%25))
 
-def splitdata(data, switchratio):
-    switch = int(switchratio*np.shape(data)[1])
-    train_set = data[:switch]
-    test_set = data[switch:]
-    return train_set, test_set
+        print "Testing with hold out of whole image number: "
+        print image_names
 
-def class_split(dataset):
-    classindex = -1 #class index in the attribute vector is -1
-    Positive_set = []
-    Negative_set = []
-    for feature_vector in dataset:
-        if feature_vector[-1] == 0:
-            Negative_set.append(feature_vector[:classindex])
-        else:
-            Positive_set.append(feature_vector[:classindex])
-    return Positive_set, Negative_set
-
-
-def label_split(data, label_index):
-    '''input a matrix, data with each row representing
-       an example with a label at data[row][label_index]
-       also converts labels to integers
-'''
-    data_array= []
-    label_array= []
-    for row in data:
-        t = row[label_index]
-        if t == 0: #negative
-            t = [0]
-        else: #positive
-            t = [1]
-        label_array.append(t)
-        del row[label_index]
-        data_array.append(row)
-    return data_array, label_array
+        for x in range(len(features)):
+                feature = features[x]
+                name = names[x]
+                this_name = name[:(9+len(str(test_image_index)))]                                        
+                if this_name in image_names:
+                        test_features.append(feature)
+                        test_names.append(name)
+                else:
+                        train_features.append(feature)
+                        train_names.append(name)
+        return train_features, train_names, test_features, test_names
+        
+def label_divide(features,names):
+        pos_features = []
+        pos_names = []
+        neg_features = []
+        neg_names = []
+        for x in range(len(features)):
+                feature = features[x]
+                name = names[x]
+                if "pos" in name:
+                        pos_features.append(feature)
+                        pos_names.append(name)
+                else: #negative
+                        neg_features.append(feature)
+                        neg_names.append(name)
+        return pos_features, neg_features
 
 
 def multilayer_perceptron(x, weights, biases):
@@ -83,11 +89,24 @@ training_epochs = 10
 batch_size = 10
 display_step = 50
 
+features =np.load('cell_featurevectors_DL.npy')
+names = np.load('cell_filenames.npy')
 
-negative_features = np.load('featurevectors_DL_neg.npy')
-positive_features = np.load('featurevectors_DL_pos.npy')
+newfile = 'MLP_cell_results.csv' #where results will be printed
+'''
+f8 = open(newfile, 'wb')
+fw8 = csv.writer(f8)
+fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
+'''
+hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
 
 #concatenate label to the end of each feature matrix
+
+train_features, train_names, test_features, test_names = test_divide(features,names, x,hold_x_out)
+        
+positive_features, negative_features = label_divide(train_features,train_names)
+positive_test_features, negative_test_features = label_divide(test_features,test_names)
+
 positive_labels=np.transpose(np.ones(len(positive_features))*(1))
 positive_labels = positive_labels.reshape(len(positive_features),1)
 positive_features = np.concatenate((positive_features, positive_labels), axis=1)

@@ -37,16 +37,26 @@ def get_accuracy(Training_data, Training_labels, negative_test_featues, positive
         accuracy = float(negativeaccuracy + positiveaccuracy)/(float(len(negative_test_features)+ len(positive_test_features)))
         return final_negative_accuracy, final_positive_accuracy, accuracy
 
-def test_divide(features,names, test_image_index):
+def test_divide(features,names, test_image_index, hold_x_out):
         train_features = []
         train_names = []
         test_features = []
         test_names = []
-        transfer_name = "transfer_" + str(test_image_index)
+        #define the names you're taking as test set
+        #iterate through image indices test_image_index+[0..hold_x_out]
+        image_names = []
+        for x in range(hold_x_out):
+                #location of filename dependent on the # of digits in the index
+                image_names.append("transfer_" + str((test_image_index+x)%25))
+
+        print "Testing with hold out of whole image number: "
+        print image_names
+
         for x in range(len(features)):
                 feature = features[x]
                 name = names[x]
-                if transfer_name == name[:10]:
+                this_name = name[:(9+len(str(test_image_index)))]                                        
+                if this_name in image_names:
                         test_features.append(feature)
                         test_names.append(name)
                 else:
@@ -70,21 +80,20 @@ def label_divide(features,names):
                         neg_names.append(name)
         return pos_features, neg_features
 
-features = np.load('featurevectors_DL.npy')
-names = np.load('filenames.npy')
+features =np.load('cell_featurevectors_DL.npy')
+names = np.load('cell_filenames.npy')
 
-newfile = 'results.csv' #where results will be printed
+newfile = 'SVM_cell_results.csv' #where results will be printed
 f8 = open(newfile, 'wb')
 fw8 = csv.writer(f8)
 fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
- 
+hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
 
 #define test features by whole image
 #       --> ex: test set = all images derived from image one
 #       each whole image produces
-for x in range(1,3): #currently testing for 8 images
-        
-        train_features, train_names, test_features, test_names = test_divide(features,names, x)
+for x in range(1,25): #testing for each image
+        train_features, train_names, test_features, test_names = test_divide(features,names, x,hold_x_out)
         
         positive_features, negative_features = label_divide(train_features,train_names)
         positive_test_features, negative_test_features = label_divide(test_features,test_names)
@@ -96,6 +105,7 @@ for x in range(1,3): #currently testing for 8 images
         Training_labels=np.concatenate((positive_labels, negative_labels), axis=0)
 
         kernels = ["rbf","linear", "poly","poly","poly","poly","poly"]
+#        kernels = ['linear']
         deg = 2
         for SVM_kern in kernels:
                 if SVM_kern == "poly":

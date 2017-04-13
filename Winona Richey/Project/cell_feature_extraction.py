@@ -22,6 +22,7 @@ cwd = os.getcwd()
 print cwd
 print "Loading all files"
 for filename in glob.glob('*.jpg'):
+    print filename
     image = cv2.imread(filename)
     samples[i]=image
     names.append(filename)
@@ -30,6 +31,7 @@ for filename in glob.glob('*.jpg'):
        
 #---load pre-trained network (inceptionv3 from google trained on ImageNet2012)---
 
+print "Training"
 os.chdir("./../")
 with open('./classify_image_graph_def.pb', 'rb') as graph_file:
     graph_def = tf.GraphDef()
@@ -49,13 +51,13 @@ for i in range(0,len(samples)):
         ))
         feature=np.array(feature)
         features.append(feature)
-        
+
 
 #saving feature vectors to a file (to run SVM)
-np.save('cell_featurevectors_DL.npy', features)
+np.save('larger_cell_featurevectors_DL.npy', features)
 
 #saving filenames, (in same order as feature vectors) to maintain association
 # between file and whole image
-np.save('cell_filenames.npy', names)
+np.save('larger_cell_filenames.npy', names)
 
 

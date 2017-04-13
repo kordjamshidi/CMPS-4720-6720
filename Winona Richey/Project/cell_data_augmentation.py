@@ -120,6 +120,7 @@ for x in range(1,25):    #for each whole transfer image
             af_cut = np.rot90(np.asarray(image_set[1]),degrees[rotation])
             pairs.append([bef_cut, af_cut, name])
         count+=1
+        
     print "mirroring images"
     for image_set in range(0,len(pairs)): #for every image (whole, fourths and sixths = 11 total)
         image_set = pairs[image_set]
@@ -127,7 +128,7 @@ for x in range(1,25):    #for each whole transfer image
         for flip_val in range(1,3): #1 = vertical flip; 2= horizontal flip
             name = image_set[2]+fliplabels[flip_val-1]
             pairs.append([cv2.flip(image_set[0],flip_val), cv2.flip(image_set[1],flip_val), name])
-            
+    
     #pairs = [whole, normalized fourths, normalized sixths,
     print "combining and saving images"
     for image_set in pairs:

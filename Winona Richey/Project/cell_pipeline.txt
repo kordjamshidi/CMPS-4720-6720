@@ -1,6 +1,6 @@
 #!/bin/bash
 # Data Pipeline
-#run in terminal with “./pipeline.txt”
+#run in terminal with “./cell_pipeline.txt”
 echo “Running Data Pipeline”
 
 #  removes existing images and begins replacing them
@@ -9,15 +9,15 @@ echo “Running Data Pipeline”
 
 
 #  make images
-#  produces (overwrites) annotations csv file
-#echo “Data Augmentation”
-#python cell_data_augmentation.py
+#  produces (overwrites) automated_annotations csv file
+echo “Data Augmentation”
+python cell_data_augmentation.py
 
 
-#  learn features; output features to npy files
-#  output: feature vector matrix
-#	    filename matrix
-#  both matrices are in the same order filename[x] is the name of feature_vector[x]
+#  learn features
+#  output: feature vector matrix npy file
+#	    filename matrix npy file
+#  both matrices are in the same order names[x] is the name of feature_vector[x]
 echo “Feature Extraction”  
 python cell_feature_extraction.py
 
