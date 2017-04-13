@@ -73,9 +73,9 @@ def get_labels(features,names):
         feature = features[x]
         name = names[x]
         if "pos" in name:
-            labels.append(1)
+            labels.append([1,0])
         else: #negative
-            labels.append
+            labels.append([0,1])
     return np.asarray(labels)
 
 def multilayer_perceptron(x, weights, biases):
@@ -100,11 +100,10 @@ def multilayer_perceptron(x, weights, biases):
     output_layer = tf.matmul(layer_2, weights['out']) + biases['out']
     return output_layer
 
-
 #parameters
 label_index = 4
 learning_rate = 0.1
-training_epochs = 10
+training_epochs = 150
 batch_size = 10
 display_step = 50
 
@@ -134,10 +133,10 @@ test_labels = get_labels(test_data, test_names)
 
 
 # Network Parameters
-n_hidden_1 = 100 # 1st layer number of nodes
-n_hidden_2 = 100 # 2nd layer number of nodes
+n_hidden_1 = 400 # 1st layer number of nodes
+n_hidden_2 = 400 # 2nd layer number of nodes
 n_input = len(train_data[0]) #  data input size (length of feature vector for each data point)
-n_classes = 1 # binary
+n_classes = 2 # number of labels
 
 # tensorflow Graph input
 x = tf.placeholder("float", [None, n_input]) #initializing data placeholder
