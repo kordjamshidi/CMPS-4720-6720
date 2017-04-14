@@ -92,20 +92,20 @@ def multilayer_perceptron(x, weights, biases):
     layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
     #layer_1 = tf.nn.relu(layer_1)
     
-    # Hidden layer with RELU activation
+    # Hidden layer 
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
     #layer_2 = tf.nn.relu(layer_2)
     
-    # Output layer with linear activation
-    output_layer = tf.matmul(layer_2, weights['out']) + biases['out']
+    # Hidden layer 
+    layer_3 = tf.add(tf.matmul(layer_2, weights['h3']), biases['b3'])
+    
+    # Hidden layer 
+    layer_4 = tf.add(tf.matmul(layer_3, weights['h4']), biases['b4'])
+    
+    # Output layer
+    output_layer = tf.matmul(layer_4, weights['out']) + biases['out']
     return output_layer
 
-#parameters
-label_index = 4
-learning_rate = 0.1
-training_epochs = 150
-batch_size = 10
-display_step = 50
 
 features =np.load('cell_featurevectors_DL.npy')
 names = np.load('cell_filenames.npy')
@@ -117,7 +117,7 @@ fw8 = csv.writer(f8)
 fw8.writerow(['Test Set','Kernel', 'deg', 'Negative Accuracy(Specificity)', 'Positive Accuracy(Sensitivity)', 'Total Accuracy'])
 '''
 hold_x_out = 1 #the number of images to hold out for each test (defines the training set)
-x = 1 #which transfer to hold-out; will be changed in a loop eventually
+x =  2#which transfer to hold-out; will be changed in a loop eventually
 
 
 #split into training and testing sets
@@ -131,10 +131,17 @@ test_labels = get_labels(test_data, test_names)
 
 '''------------------------model begins-------------------'''
 
+#parameters
+learning_rate = 0.1
+training_epochs = 1000
+batch_size = 10
+display_step = 50
 
 # Network Parameters
-n_hidden_1 = 400 # 1st layer number of nodes
-n_hidden_2 = 400 # 2nd layer number of nodes
+n_hidden_1 = 200 # 1st layer number of nodes
+n_hidden_2 = 100 # 2nd layer number of nodes
+n_hidden_3 = 200 # 2nd layer number of nodes
+n_hidden_4 = 200 # 2nd layer number of nodes
 n_input = len(train_data[0]) #  data input size (length of feature vector for each data point)
 n_classes = 2 # number of labels
 
@@ -146,12 +153,16 @@ y = tf.placeholder("float", [None, n_classes]) #initializind label placeholder
 weights = {
     'h1': tf.Variable(tf.random_normal([n_input, n_hidden_1])),
     'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-    'out': tf.Variable(tf.random_normal([n_hidden_2, n_classes]))
+    'h3': tf.Variable(tf.random_normal([n_hidden_2, n_hidden_3])),
+    'h4': tf.Variable(tf.random_normal([n_hidden_3, n_hidden_4])),
+    'out': tf.Variable(tf.random_normal([n_hidden_4, n_classes]))
 }
 #need a bias for every layer
 biases = {
     'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-    'b2': tf.Variable(tf.random_normal([n_hidden_2])),
+    'b2': tf.Variable(tf.random_normal([n_hidden_2])),    
+    'b3': tf.Variable(tf.random_normal([n_hidden_3])),
+    'b4': tf.Variable(tf.random_normal([n_hidden_4])),
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
 
@@ -195,6 +206,8 @@ with tf.Session() as sess:
         if epoch % display_step == 0:
             print("Epoch:", '%04d' % (epoch+1), "cost=", \
                 "{:.9f}".format(avg_cost))
+        if avg_cost == 0:
+            break
     print("Optimization Done.")
 
     # Test model

@@ -19,23 +19,25 @@ def get_accuracy(Training_data, Training_labels, negative_test_featues, positive
         
         #there should be no nonzero elements in negative accuracy (all should be predicted as 0);   ideal: sum == 0
         #number of samples incorrectly calssified
-        negativeaccuracy=np.count_nonzero(np.array(negative_accuracy))
+        true_negatives=np.count_nonzero(np.array(negative_accuracy))
         
         #number of samples classified correctly
-        negativeaccuracy = len(negative_test_features)-negativeaccuracy
+        true_negatives = len(negative_test_features)-negativeaccuracy
 
         #there should be no zero elements in positive accuracy (all should be predicted as 1);      ideal: len == sum
-        positive_accuracy=clf.predict(positive_test_features)
+        true_positives=clf.predict(positive_test_features)
 
         #this is the number of samples calssified correctly
-        positiveaccuracy=np.count_nonzero(np.array(positive_accuracy)) 
+        true_positives=np.count_nonzero(np.array(positive_accuracy)) 
 
-        final_negative_accuracy = str(float(negativeaccuracy)/float(len(negative_test_features))*100)
-        final_positive_accuracy = str(float(positiveaccuracy)/float(len(positive_test_features))*100)
+        TN = str(float(true_negatives)/float(len(negative_test_features))*100)
+        FN = str(float(len(negative_test_features))/float(true_negatives)*100)
+        TP = str(float(true_positives)/float(len(positive_test_features))*100)
+        FP = str(float(len(positive_test_features))/float(true_positives)*100)
 
         #accuracy = (number correctly classified negatives + number of correctly classified positives)/ total samples
         accuracy = float(negativeaccuracy + positiveaccuracy)/(float(len(negative_test_features)+ len(positive_test_features)))
-        return final_negative_accuracy, final_positive_accuracy, accuracy
+        return TN, FN, TP, FP, accuracy
 
 def test_divide(features,names, test_image_index, hold_x_out):
         train_features = []
@@ -111,12 +113,12 @@ for x in range(1,25): #testing for each image
         for SVM_kern in kernels:
                 if SVM_kern == "poly":
                         clf = svm.SVC(kernel = SVM_kern, degree = deg)
-                        neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
+                        TN, FN, TP, FP, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
                         fw8.writerow(['transfer_' + str(x), SVM_kern, deg, neg, pos, accuracy])
                         deg +=1
                 else:
                         clf = svm.SVC(kernel = SVM_kern)
-                        neg, pos, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
+                        TN, FN, TP, FP, accuracy = get_accuracy(Training_data, Training_labels, negative_test_features, positive_test_features)
                         fw8.writerow(['transfer_' + str(x), SVM_kern, '-' , neg, pos, accuracy])
         
 
