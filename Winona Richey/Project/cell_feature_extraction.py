@@ -13,7 +13,8 @@ from sklearn import svm
 import random
 
 ##reading in images
-os.chdir("./cell_image_folder")
+feature_set = "smaller"
+os.chdir("./" + feature_set + "_cell_image_folder")
 i=0
 samples={}
 names=[]
@@ -45,19 +46,20 @@ for i in range(0,len(samples)):
     print i
     with tf.Session() as sess:
         softmax_tensor = sess.graph.get_tensor_by_name('pool_3:0')
-        feature = np.squeeze(sess.run(
+        feature = sess.run(
             softmax_tensor,
             {'DecodeJpeg:0': image}
-        ))
+        )
         feature=np.array(feature)
         features.append(feature)
 
-
+#reduce empty dimensions
+features = np.squeeze(features)
 #saving feature vectors to a file (to run SVM)
-np.save('larger_cell_featurevectors_DL.npy', features)
+np.save(feature_set + '_cell_featurevectors_DL.npy', features)
 
 #saving filenames, (in same order as feature vectors) to maintain association
 # between file and whole image
-np.save('larger_cell_filenames.npy', names)
+np.save(feature_set+'_cell_filenames.npy', names)
 
 

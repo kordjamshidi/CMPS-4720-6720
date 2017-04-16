@@ -38,27 +38,33 @@ def test_divide(features,names, test_image_index, hold_x_out):
         train_names = []
         test_features = []
         test_names = []
+        whole_features = []
+        whole_names = []
         #define the names you're taking as test set
         #iterate through image indices test_image_index+[0..hold_x_out]
         image_names = []
         for x in range(hold_x_out):
                 #location of filename dependent on the # of digits in the index
-                image_names.append("transfer_" + str((test_image_index+x)%25))
+                image_names.append("transfer_" + str((test_image_index-1+x)%24 + 1)+ '_')
 
         print "Testing with hold out of whole image number: "
         print image_names
 
-        for x in range(len(features)):
+        for x in range(len(features)-1):
                 feature = features[x]
                 name = names[x]
-                this_name = name[:(9+len(str(test_image_index)))]                                        
+                this_name = name[:(10+len(str(test_image_index)))]                                        
                 if this_name in image_names:
                         test_features.append(feature)
                         test_names.append(name)
+                        if 'whole' in this_name:
+                                whole_features.append(feature)
+                                whole_names.append(name)
+
                 else:
                         train_features.append(feature)
                         train_names.append(name)
-        return train_features, train_names, test_features, test_names
+        return train_features, train_names, test_features, test_names, whole_features, whole_names
 
 # from Github: Mistobaan/tensorflow_confusion_metrics.py   
 # from https://cloud.google.com/solutions/machine-learning-with-financial-time-series-data
@@ -116,19 +122,10 @@ def tf_confusion_metrics(model, actual_classes, session, feed_dict):
             feed_dict
         )
     tpr = float(tp)/(float(tp) + float(fn))
-    
     fpr = float(fp)/(float(tp) + float(fn))
-
     specificity = float(tn)/(float(tn) + float(fp))
-    
-
     accuracy = (float(tp) + float(tn))/(float(tp) + float(fp) + float(fn) + float(tn))
-
-    recall = tpr
     sensitivity = tpr
-    precision = float(tp)/(float(tp) + float(fp))
-
-    f1_score = (2 * (precision * recall)) / (precision + recall)
     return tp, tn, fp, fn, sensitivity, specificity, accuracy
 
 def get_labels(features,names):
@@ -159,29 +156,28 @@ def multilayer_perceptron(x, weights, biases):
        add - element wise matrix addition
        --> x.w + b
 '''
-    # Hidden layer with RELU activation
+    # Hidden layer 
     layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
-    #layer_1 = tf.nn.relu(layer_1)
     
-    # Hidden layer with RELU activation
+    # Hidden layer
     layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
     #layer_2 = tf.nn.relu(layer_2)
     
-    # Hidden layer with RELU activation
+    # Hidden layer
     layer_3 = tf.add(tf.matmul(layer_2, weights['h3']), biases['b3'])
-    #layer_2 = tf.nn.relu(layer_2)
+    #layer_3 = tf.nn.relu(layer_3)
     
-    # Hidden layer with RELU activation
+    # Hidden layer 
     layer_4 = tf.add(tf.matmul(layer_3, weights['h4']), biases['b4'])
-    #layer_2 = tf.nn.relu(layer_2)
     
     # Output layer
     output_layer = tf.matmul(layer_4, weights['out']) + biases['out']
     return output_layer
 
-feature_set = "larger_"
+
+feature_set = "medium_"
 features =np.load(feature_set + 'cell_featurevectors_DL.npy')
-names = np.load(feature_set + 'larger_cell_filenames.npy')
+names = np.load(feature_set + 'cell_filenames.npy')
 total_transfers = 24 #the total number of images you want to train/test on (training+test set)
 
 '''------------------------model begins-------------------'''
@@ -219,28 +215,29 @@ biases = {
     'b4': tf.Variable(tf.random_normal([n_hidden_4])),
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
-for hold_x_out in [1,3,5]:
-    newfile = feature_set + 'MLP_cell_results_L' + str(hold_x_out) + 'O.csv' #where results will be printed
+for hold_x_out in [1,3,5]: #the number of images to hold out for each test (defines the training set)
+    newfile = feature_set + '_200_MLP_cell_results_L' + str(hold_x_out) + 'O.csv' #where results will be printed
     file = open(newfile, 'wb')
     fw8 = csv.writer(file)
     
     #write file header; parameters and column headings
     test_percent= float(hold_x_out)*100/total_transfers
 
-    fw8.writerow(['leaning rate','max training epochs', 'batch_size', 'h1', 'h2', 'h3', 'h4', 'Percentage for Test set'])
+    fw8.writerow(['leaning rate','max training epochs', 'batch_size', 'h1', 'h2-RELU', 'h3-RELU', 'h4', 'Percentage for Test set'])
     fw8.writerow(['cost/10', training_epochs, batch_size, n_hidden_1, n_hidden_2, n_hidden_3, n_hidden_4, test_percent])
     fw8.writerow(['Test Set starts at:', "True Positive", 'True Negative', 'False Positive', 'False Negative', 'Sensitivity-PosAcc', 'Specificity-NegAcc', 'Total Accuracy'])
 
-    for transfer in range(1,total_transfers+1):
+    for transfer in range(4,total_transfers+1): #run on first half
         #reset learning rate
         learning_rate = float(1)
     
         #split into training and testing sets
-        train_data, train_names, test_data, test_names = test_divide(features,names, transfer, hold_x_out)
+        train_features, train_names, test_features, test_names, wholeimg_features, wholeimg_names = test_divide(features,names, transfer, hold_x_out)
 
         #convert names (Strings) into labels (matrices)
         train_labels = get_labels(train_data, train_names)
         test_labels = get_labels(test_data, test_names)
+        wholeimg_labels = get_labels(wholeimg_features, wholeimg_names)
 
         # Construct model, with random weights/biases and empty x
         pred = multilayer_perceptron(x, weights, biases)
@@ -295,16 +292,14 @@ for hold_x_out in [1,3,5]:
             print("Optimization Done.")
         
             # Test model: tf_confusion_metrics(model, actual_classes, session, feed_dict):
-            tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: test_data, y: test_labels})
-            '''
-            correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
-    
-            # Calculate accuracy
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    '''
+            tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: test_data, y: test_labels})            
+            fw8.writerow(["transfer "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
             print("Accuracy: " + str(accuracy))
             
-            fw8.writerow(["transfer "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
+            tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: wholeimg_features, y: wholeimg_labels})            
+            fw8.writerow(["Whole image Metrics for transfer: "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
+            print("Whole Image Accuracy: " + str(accuracy))
+            
 
     file.close()
 
