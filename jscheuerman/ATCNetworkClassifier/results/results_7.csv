@@ -1,0 +1,2 @@
+Model type,Regularization,Iteration,Accuracy,L0 Precision,L1 Precision,L0 Recall,L1 Recall,L0 F1,L1 F1,
+Validation Data,0.1,37,0.9,1.0,0.8333333333333334,0.8,1.0,0.888888888888889,0.9090909090909091,
