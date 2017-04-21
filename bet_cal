@@ -5,3 +5,5 @@ difference = abs(difference_M);
 difference(find(difference))=1./difference(find(difference));
 bet_ = betweenness_wei(difference);
 save('bet_.mat','bet_');
+deg_ = degrees_und(difference);
+save('deg_.mat','deg_');
