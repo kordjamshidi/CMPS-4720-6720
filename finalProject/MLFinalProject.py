@@ -43,7 +43,7 @@ def allFeatures(tweet):
     capitalizationFeatures(features, tweet)
     emoticonFeatures(features, tweet)
     punctuationFeatures(features, tweet)
-    sentimentFeatures(features, tweet)
+    #sentimentFeatures(features, tweet)
     return features
     
 
@@ -234,7 +234,15 @@ mostInformativeFeatures(vectorizer, NBclassifier)
 #Implementing 5-fold Cross Validation
 SVMscores = cross_val_score(SVMclassifier, testFeatures, testTargets, cv=5, scoring='f1_macro')
 NBscores = cross_val_score(NBclassifier, testFeatures, testTargets, cv=5, scoring='f1_macro')
-print("SVM scores: ")
-print(SVMscores)
-print("Naive Bayes Scores: ")
-print(NBscores)
+
+#function to take average of CV output
+def findMean(scoreArray):
+    sumscores = 0
+    for score in scoreArray:
+        sumscores += score
+    return ((sumscores/5)*100).round(2)
+
+print("SVM score using five-fold CV: ")
+print(findMean(SVMscores))
+print("Naive Bayes score using five-fold CV: ")
+print(findMean(NBscores))
