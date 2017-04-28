@@ -1,0 +1,48 @@
+import csv, collections
+import numpy as np
+import nltk
+
+class loadSent(object):
+    
+    def __init__(self):
+        sentScores = collections.defaultdict(list)
+    
+        with open('SentiWordNet_3.0.0_20130122.txt', 'r') as csvfile:
+            
+            reader = csv.reader(csvfile, delimiter='\t',quotechar='"')
+            
+            for line in reader:
+                if line[0].startswith('#'):
+                    continue
+                if len(line)==1:
+                    continue
+                
+                POS, ID, PosScore, NegScore, SynsetTerms, Gloss = line
+                
+                if len(POS)==0 or len(ID)==0:
+                    continue
+    
+                for term in SynsetTerms.split(" "):
+                    term = term.split("#")[0]
+                    term = term.replace("-", " ").replace("_", " ")
+                    key = "%s/%s"%(POS,term.split("#")[0])
+                    sentScores[key].append((float(PosScore),float(NegScore)))
+                    
+        for key, value in sentScores.iteritems():
+            sentScores[key] = np.mean(value,axis=0)
+            
+        self.sentScores = sentScores
+            
+        
+    def scoreSentence(self,sentence):
+        pos = nltk.pos_tag(sentence)
+        mean_score = np.array([0.0,0.0])
+        for j in range(len(pos)):
+            mean_score += self.score(pos[j][0],pos[j][1]) 
+        
+        return mean_score
+    
+   
+
+    
+            
