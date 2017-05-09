@@ -1,0 +1,4 @@
+leaning rate,max training epochs,batch_size,h1,h2-RELU,h3-RELU,h4,Percentage for Test set
+cost/10,1000,10,200,200,200,200,20.833333333333332
+Test Set starts at:,True Positive,True Negative,False Positive,False Negative,Sensitivity-PosAcc,Specificity-NegAcc,Total Accuracy
+transfer 3,238.0,86.0,58.0,58.0,0.8040540540540541,0.5972222222222222,0.7363636363636363
