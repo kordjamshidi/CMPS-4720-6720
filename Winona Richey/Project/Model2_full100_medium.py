@@ -227,7 +227,7 @@ for hold_x_out in [5,3,1]: #the number of images to hold out for each test (defi
     fw8.writerow(['cost/10', training_epochs, batch_size, n_hidden_1, n_hidden_2, n_hidden_3, n_hidden_4, test_percent])
     fw8.writerow(['Test Set starts at:', "True Positive", 'True Negative', 'False Positive', 'False Negative', 'Sensitivity-PosAcc', 'Specificity-NegAcc', 'Total Accuracy'])
 
-    for transfer in range(4,total_transfers+1): #run on first half
+    for transfer in range(1,total_transfers+1): #run on first half
         #reset learning rate
         learning_rate = float(1)
     
@@ -294,7 +294,7 @@ for hold_x_out in [5,3,1]: #the number of images to hold out for each test (defi
             # Test model: tf_confusion_metrics(model, actual_classes, session, feed_dict):
             tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: test_data, y: test_labels})            
             fw8.writerow(["Whole image Metrics for transfer: "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
-            print("Whole Accuracy: " + str(accuracy))
+            print("Accuracy: " + str(accuracy))
             
 
     file.close()

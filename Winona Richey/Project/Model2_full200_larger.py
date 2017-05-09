@@ -188,10 +188,10 @@ batch_size = 10
 display_step = 100
 
 # Network Parameters
-n_hidden_1 = 100 # 1st layer number of nodes
-n_hidden_2 = 100 # 2nd layer number of nodes
-n_hidden_3 = 100 # 2nd layer number of nodes
-n_hidden_4 = 100 # 2nd layer number of nodes
+n_hidden_1 = 200 # 1st layer number of nodes
+n_hidden_2 = 200 # 2nd layer number of nodes
+n_hidden_3 = 200 # 2nd layer number of nodes
+n_hidden_4 = 200 # 2nd layer number of nodes
 n_input = len(features[0]) #  data input size (length of feature vector for each data point)
 n_classes = 2 # number of labels
 
@@ -215,7 +215,7 @@ biases = {
     'b4': tf.Variable(tf.random_normal([n_hidden_4])),
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
-for hold_x_out in [1,3,5]: #the number of images to hold out for each test (defines the training set)
+for hold_x_out in [5]: #the number of images to hold out for each test (defines the training set)
     newfile = feature_set + '_200_MLP_cell_results_L' + str(hold_x_out) + 'O.csv' #where results will be printed
     file = open(newfile, 'wb')
     fw8 = csv.writer(file)
@@ -227,7 +227,7 @@ for hold_x_out in [1,3,5]: #the number of images to hold out for each test (defi
     fw8.writerow(['cost/10', training_epochs, batch_size, n_hidden_1, n_hidden_2, n_hidden_3, n_hidden_4, test_percent])
     fw8.writerow(['Test Set starts at:', "True Positive", 'True Negative', 'False Positive', 'False Negative', 'Sensitivity-PosAcc', 'Specificity-NegAcc', 'Total Accuracy'])
 
-    for transfer in range(4,total_transfers+1): #run on first half
+    for transfer in range(3,4): #total_transfers+1):
         #reset learning rate
         learning_rate = float(1)
     
@@ -296,7 +296,7 @@ for hold_x_out in [1,3,5]: #the number of images to hold out for each test (defi
             fw8.writerow(["transfer "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
             print("Accuracy: " + str(accuracy))
             
-            
+ 
 
     file.close()
 

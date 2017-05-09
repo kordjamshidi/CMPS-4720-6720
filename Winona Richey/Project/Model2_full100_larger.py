@@ -215,8 +215,8 @@ biases = {
     'b4': tf.Variable(tf.random_normal([n_hidden_4])),
     'out': tf.Variable(tf.random_normal([n_classes]))
 }
-for hold_x_out in [3,5, 1]: #the number of images to hold out for each test (defines the training set)
-    newfile = feature_set + '_200_MLP_cell_results_L' + str(hold_x_out) + 'O.csv' #where results will be printed
+for hold_x_out in [5]: #the number of images to hold out for each test (defines the training set)
+    newfile = feature_set + '_100_MLP_cell_results_L' + str(hold_x_out) + 'O.csv' #where results will be printed
     file = open(newfile, 'wb')
     fw8 = csv.writer(file)
     
@@ -227,12 +227,12 @@ for hold_x_out in [3,5, 1]: #the number of images to hold out for each test (def
     fw8.writerow(['cost/10', training_epochs, batch_size, n_hidden_1, n_hidden_2, n_hidden_3, n_hidden_4, test_percent])
     fw8.writerow(['Test Set starts at:', "True Positive", 'True Negative', 'False Positive', 'False Negative', 'Sensitivity-PosAcc', 'Specificity-NegAcc', 'Total Accuracy'])
 
-    for transfer in range(1,total_transfers+1): #run on first half
+    for transfer in range(1, total_transfers+1): #run on first half
         #reset learning rate
         learning_rate = float(1)
     
         #split into training and testing sets
-        train_features, train_names, test_features, test_names, wholeimg_features, wholeimg_names = test_divide(features,names, transfer, hold_x_out)
+        train_data, train_names, test_data, test_names, wholeimg_features, wholeimg_names = test_divide(features,names, transfer, hold_x_out)
 
         #convert names (Strings) into labels (matrices)
         train_labels = get_labels(train_data, train_names)
@@ -296,9 +296,7 @@ for hold_x_out in [3,5, 1]: #the number of images to hold out for each test (def
             fw8.writerow(["transfer "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
             print("Accuracy: " + str(accuracy))
             
-            tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: wholeimg_features, y: wholeimg_labels})            
-            fw8.writerow(["Whole image Metrics for transfer: "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
-            print("Whole Image Accuracy: " + str(accuracy))
+
             
 
     file.close()

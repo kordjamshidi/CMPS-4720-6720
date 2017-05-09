@@ -232,7 +232,7 @@ for hold_x_out in [5,3,1]: #the number of images to hold out for each test (defi
         learning_rate = float(1)
     
         #split into training and testing sets
-        train_features, train_names, test_features, test_names, wholeimg_features, wholeimg_names = test_divide(features,names, transfer, hold_x_out)
+        train_data, train_names, test_data, test_names, wholeimg_features, wholeimg_names = test_divide(features,names, transfer, hold_x_out)
 
         #convert names (Strings) into labels (matrices)
         train_labels = get_labels(train_data, train_names)
@@ -295,10 +295,6 @@ for hold_x_out in [5,3,1]: #the number of images to hold out for each test (defi
             tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: test_data, y: test_labels})            
             fw8.writerow(["transfer "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
             print("Accuracy: " + str(accuracy))
-            
-            tp, tn, fp, fn, sensitivity, specificity, accuracy = tf_confusion_metrics(pred, y, sess, feed_dict={x: wholeimg_features, y: wholeimg_labels})            
-            fw8.writerow(["Whole image Metrics for transfer: "+ str(transfer), tp, tn, fp, fn, sensitivity, specificity, accuracy])
-            print("Whole Image Accuracy: " + str(accuracy))
             
 
     file.close()

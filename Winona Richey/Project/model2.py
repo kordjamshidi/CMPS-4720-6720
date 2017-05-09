@@ -169,7 +169,7 @@ def multilayer_perceptron(x, weights, biases):
     return output_layer
 
 
-feature_set = "medium_"
+feature_set = "smaller_"
 features =np.load(feature_set + 'cell_featurevectors_DL.npy')
 names = np.load(feature_set + 'cell_filenames.npy')
 total_transfers = 24 #the total number of images you want to train/test on (training+test set)
